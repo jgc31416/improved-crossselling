@@ -140,7 +140,7 @@ class PrestashopWrapper
      */
     public static function createTable()
     {
-        $sql = "CREATE TABLE " . _DB_PREFIX_ . "crossselling_pair (
+        $sql = "CREATE TABLE IF NOT EXISTS " . _DB_PREFIX_ . "crossselling_pair (
               `id_crossselling_pair` INT NOT NULL AUTO_INCREMENT,
               `id_product_main` INT NOT NULL,
               `id_product_related` INT NOT NULL,
