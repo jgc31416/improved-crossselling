@@ -130,9 +130,9 @@ class PrestashopWrapper
             }
             $sql .= join(",", $sqlValues);
 
-            return \Db::getInstance()->execute($sql);
+            \Db::getInstance()->execute($sql);
         }
-        return false;
+        return true;
     }
 
     /**
@@ -149,6 +149,7 @@ class PrestashopWrapper
               INDEX `idx_pmain` (`id_product_main` ASC, `support` ASC))
         ";
         \Db::getInstance()->execute($sql);
+        return true;
     }
 
     /**

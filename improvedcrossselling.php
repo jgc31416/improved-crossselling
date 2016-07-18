@@ -36,7 +36,7 @@ class ImprovedCrossSelling extends Module
 
     public function __construct()
     {
-        $this->name = 'improved_crossselling';
+        $this->name = 'improvedcrossselling';
         $this->tab = 'front_office_features';
         $this->version = '0.1';
         $this->author = 'Jesus Gazol <jgc3.1416@gmail.com>';
@@ -57,29 +57,23 @@ class ImprovedCrossSelling extends Module
             !$this->registerHook('header') ||
             !$this->registerHook('shoppingCart') ||
             !$this->registerHook('actionOrderStatusPostUpdate') ||
-            !Configuration::updateValue('IMPROVED_IMPROVED_CROSSSELLING_DISPLAY_PRICE', 0) ||
-            !Configuration::updateValue('IMPROVED_IMPROVED_CROSSSELLING_NBR', 10) ||
+            !Configuration::updateValue('IMPROVED_XSELLING_DISPLAY_PRICE', "0") ||
+            !Configuration::updateValue('IMPROVED_XSELLING_NBR', "10") ||
             !\fpgrowth\PrestashopWrapper::createTable()        ) {
             $this->processTransactionsDb();
             return false;
         }
-        $this->_clearCache('improved_improved_crossselling.tpl');
+        $this->_clearCache('improved_crossselling.tpl');
 
         return true;
     }
 
-    public function enable()
-    {
-        return parent::enable();
-
-    }
-
     public function uninstall()
     {
-        $this->_clearCache('improved_improved_crossselling.tpl');
+        $this->_clearCache('improved_crossselling.tpl');
         if (!parent::uninstall() ||
-            !Configuration::deleteByName('IMPROVED_IMPROVED_CROSSSELLING_DISPLAY_PRICE') ||
-            !Configuration::deleteByName('IMPROVED_IMPROVED_CROSSSELLING_NBR')
+            !Configuration::deleteByName('IMPROVED_XSELLING_DISPLAY_PRICE') ||
+            !Configuration::deleteByName('IMPROVED_XSELLING_NBR')
         ) {
             return false;
         }
@@ -92,15 +86,15 @@ class ImprovedCrossSelling extends Module
         $this->html = '';
 
         if (Tools::isSubmit('submitCross')) {
-            if (Tools::getValue('displayPrice') != 0 && Tools::getValue('IMPROVED_CROSSSELLING_DISPLAY_PRICE') != 1) {
+            if (Tools::getValue('displayPrice') != 0 && Tools::getValue('IMPROVED_XSELLING_DISPLAY_PRICE') != 1) {
                 $this->html .= $this->displayError('Invalid displayPrice');
-            } elseif (!($product_nbr = Tools::getValue('IMPROVED_CROSSSELLING_NBR')) || empty($product_nbr)) {
+            } elseif (!($product_nbr = Tools::getValue('IMPROVED_XSELLING_NBR')) || empty($product_nbr)) {
                 $this->html .= $this->displayError('You must fill in the "Number of displayed products" field.');
             } elseif ((int)$product_nbr == 0) {
                 $this->html .= $this->displayError('Invalid number.');
             } else {
-                Configuration::updateValue('IMPROVED_CROSSSELLING_DISPLAY_PRICE', (int)Tools::getValue('IMPROVED_CROSSSELLING_DISPLAY_PRICE'));
-                Configuration::updateValue('IMPROVED_CROSSSELLING_NBR', (int)Tools::getValue('IMPROVED_CROSSSELLING_NBR'));
+                Configuration::updateValue('IMPROVED_XSELLING_DISPLAY_PRICE', (int)Tools::getValue('IMPROVED_XSELLING_DISPLAY_PRICE'));
+                Configuration::updateValue('IMPROVED_XSELLING_NBR', (int)Tools::getValue('IMPROVED_XSELLING_NBR'));
                 $this->_clearCache('improved_crossselling.tpl');
                 $this->html .= $this->displayConfirmation($this->l('Settings updated successfully'));
             }
@@ -177,7 +171,7 @@ class ImprovedCrossSelling extends Module
                 AND product_shop.active = 1
                 '.(Group::isFeatureActive() ? $sql_groups_where : '').'
             ORDER BY cpa.support desc
-            LIMIT '.(int)Configuration::get('IMPROVED_CROSSSELLING_NBR');
+            LIMIT '.(int)Configuration::get('IMPROVED_XSELLING_NBR');
 
         $order_products = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS($sqlSelection);
 
@@ -189,9 +183,9 @@ class ImprovedCrossSelling extends Module
                     (int)$order_product['product_id'].'-'.(int)$order_product['id_image'], ImageType::getFormatedName('home'));
                 $order_product['link'] = $this->context->link->getProductLink((int)$order_product['product_id'], $order_product['link_rewrite'],
                     $order_product['category'], $order_product['ean13']);
-                if (Configuration::get('IMPROVED_CROSSSELLING_DISPLAY_PRICE') && ($tax_calc == 0 || $tax_calc == 2)) {
+                if (Configuration::get('IMPROVED_XSELLING_DISPLAY_PRICE') && ($tax_calc == 0 || $tax_calc == 2)) {
                     $order_product['displayed_price'] = Product::getPriceStatic((int)$order_product['product_id'], true, null);
-                } elseif (Configuration::get('IMPROVED_CROSSSELLING_DISPLAY_PRICE') && $tax_calc == 1) {
+                } elseif (Configuration::get('IMPROVED_XSELLING_DISPLAY_PRICE') && $tax_calc == 1) {
                     $order_product['displayed_price'] = Product::getPriceStatic((int)$order_product['product_id'], false, null);
                 }
                 $order_product['allow_oosp'] = Product::isAvailableWhenOutOfStock((int)$order_product['out_of_stock']);
@@ -228,7 +222,7 @@ class ImprovedCrossSelling extends Module
                     array(
                         'orderProducts' => $final_products_list,
                         'middlePosition_crossselling' => round(count($final_products_list) / 2, 0),
-                        'crossDisplayPrice' => Configuration::get('IMPROVED_CROSSSELLING_DISPLAY_PRICE')
+                        'crossDisplayPrice' => Configuration::get('IMPROVED_XSELLING_DISPLAY_PRICE')
                     )
                 );
             }
@@ -262,7 +256,7 @@ class ImprovedCrossSelling extends Module
                     array(
                         'orderProducts' => $final_products_list,
                         'middlePosition_crossselling' => round(count($final_products_list) / 2, 0),
-                        'crossDisplayPrice' => Configuration::get('IMPROVED_CROSSSELLING_DISPLAY_PRICE')
+                        'crossDisplayPrice' => Configuration::get('IMPROVED_XSELLING_DISPLAY_PRICE')
                     )
                 );
             }
@@ -288,7 +282,7 @@ class ImprovedCrossSelling extends Module
                     array(
                         'type' => 'switch',
                         'label' => $this->l('Display price on products'),
-                        'name' => 'IMPROVED_CROSSSELLING_DISPLAY_PRICE',
+                        'name' => 'IMPROVED_XSELLING_DISPLAY_PRICE',
                         'desc' => $this->l('Show the price on the products in the block.'),
                         'values' => array(
                             array(
@@ -306,7 +300,7 @@ class ImprovedCrossSelling extends Module
                     array(
                         'type' => 'text',
                         'label' => $this->l('Number of displayed products'),
-                        'name' => 'IMPROVED_CROSSSELLING_NBR',
+                        'name' => 'IMPROVED_XSELLING_NBR',
                         'class' => 'fixed-width-xs',
                         'desc' => $this->l('Set the number of products displayed in this block.'),
                     ),
@@ -357,8 +351,8 @@ class ImprovedCrossSelling extends Module
     public function getConfigFieldsValues()
     {
         return array(
-            'IMPROVED_CROSSSELLING_NBR' => Tools::getValue('IMPROVED_CROSSSELLING_NBR', Configuration::get('IMPROVED_CROSSSELLING_NBR')),
-            'IMPROVED_CROSSSELLING_DISPLAY_PRICE' => Tools::getValue('IMPROVED_CROSSSELLING_DISPLAY_PRICE', Configuration::get('IMPROVED_CROSSSELLING_DISPLAY_PRICE')),
+            'IMPROVED_XSELLING_NBR' => Tools::getValue('IMPROVED_XSELLING_NBR', Configuration::get('IMPROVED_XSELLING_NBR')),
+            'IMPROVED_XSELLING_DISPLAY_PRICE' => Tools::getValue('IMPROVED_XSELLING_DISPLAY_PRICE', Configuration::get('IMPROVED_XSELLING_DISPLAY_PRICE')),
         );
     }
 
