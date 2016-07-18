@@ -155,13 +155,13 @@ class PrestashopWrapper
     /**
      * Function that injects data into test database, do not use in production
      */
-    public static function injectDummyCarts()
+    public function injectDummyCarts()
     {
         ini_set("max_execution_time",3600);
-        $totalCarts = 300000;
+        $totalCarts = 30;
         $totalProducts = 3;
-        $idProducts = range(1, 30000);
-        $idCustomers = range(1, 200000);
+        $idProducts = range(1, 8);
+        $idCustomers = range(1, 8);
         #Create cart
         for ($i = 1; $i < $totalCarts; $i++) {
             $cart = new \Cart();
@@ -178,7 +178,7 @@ class PrestashopWrapper
             $cart->add();
             #Insert products
             for ($j = 0; $j <= $totalProducts; $j++) {
-                $sql = "INSERT INTO `prestashop`.`ps_cart_product`
+                $sql = "INSERT IGNORE INTO `prestashop`.`ps_cart_product`
                 (`id_cart`,
                 `id_product`,
                 `id_address_delivery`,
@@ -189,9 +189,9 @@ class PrestashopWrapper
                 )
                 VALUES
                 (" . $cart->id . "," . $idProducts[array_rand($idProducts)] . ", 1, 1, 0, 0, 1 )";
-                \Db::getInstance()->executeS($sql);
+                $rows = \Db::getInstance()->execute($sql);
             }
         }
-
+        return $rows;
     }
 }

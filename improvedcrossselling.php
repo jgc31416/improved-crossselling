@@ -246,9 +246,9 @@ class ImprovedCrossSelling extends Module
      */
     public function hookProductFooter($params)
     {
-        $cache_id = 'crossselling|productfooter|'.(int)$params['product']['id'];
+        $cache_id = 'crossselling|productfooter|'.(int)$params['product']->id;
        if (!$this->isCached('improved_crossselling.tpl', $this->getCacheId($cache_id))) {
-            $final_products_list = $this->getOrderProducts(array($params['product']['id']));
+            $final_products_list = $this->getOrderProducts(array($params['product']->id));
 
 
             if (count($final_products_list) > 0) {
@@ -280,7 +280,7 @@ class ImprovedCrossSelling extends Module
                 ),
                 'input' => array(
                     array(
-                        'type' => 'switch',
+                        'type' => 'radio',
                         'label' => $this->l('Display price on products'),
                         'name' => 'IMPROVED_XSELLING_DISPLAY_PRICE',
                         'desc' => $this->l('Show the price on the products in the block.'),
