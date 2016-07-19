@@ -235,11 +235,10 @@ class ImprovedCrossSelling extends Module
      */
     public function hookProductFooter($params)
     {
+
         $cache_id = 'crossselling|productfooter|'.(int)$params['product']->id;
-       if (!$this->isCached('improved_crossselling.tpl', $this->getCacheId($cache_id))) {
+        if (!$this->isCached('improved_crossselling.tpl', $this->getCacheId($cache_id))) {
             $final_products_list = $this->getOrderProducts(array($params['product']->id));
-
-
             if (count($final_products_list) > 0) {
                 $this->smarty->assign(
                     array(
@@ -250,8 +249,8 @@ class ImprovedCrossSelling extends Module
                 );
             }
         }
-
-        return $this->display(__FILE__, 'improved_crossselling.tpl', $this->getCacheId($cache_id));
+        $strOut = $this->display(__FILE__, 'improved_crossselling.tpl', $this->getCacheId($cache_id));
+        return $strOut;
     }
 
     public function hookActionOrderStatusPostUpdate($params)
