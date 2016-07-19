@@ -14,6 +14,9 @@ This module is an starting point for anyone that wants to use cross-selling for 
 ## Installation
 Install as an standard Prestashop module, the installation can take a while as it creates the pattern database.
 
+Download stable version here: https://raw.githubusercontent.com/jgc31416/improved-crossselling/master/bin/improvedcrossselling.zip
+
+
 ## Recommendations
 * It has been tested in Prestashop v1.5 - 1.6, do not use with other versions.
 * You should update the pattern database at least once a week.
